@@ -62,14 +62,14 @@ public class MonitorWsdlManager extends BaseXml {
 		 * </plnk:partnerLinkType>
 		 */
 
-		String opertation_name = this.get_opation_name();
+		String porttype_name = this.get_portType_name();
 
 		Element partnerLinkTypeNode = this.xmlDocument.createElement("plnk:partnerLinkType");
 		this.setAttributeNode(partnerLinkTypeNode, "name", MONITOR_PARTNERLINK_NAME);
 
 		Element partnerLinkRoleNode = this.xmlDocument.createElement("plnk:role");
 		this.setAttributeNode(partnerLinkRoleNode, "name", MONITOR_ROLE_NAME);
-		this.setAttributeNode(partnerLinkRoleNode, "portType", xmlns_monitor + opertation_name);
+		this.setAttributeNode(partnerLinkRoleNode, "portType", xmlns_monitor + porttype_name);
 
 		partnerLinkTypeNode.appendChild(partnerLinkRoleNode);
 
