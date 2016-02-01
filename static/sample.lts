@@ -1,0 +1,44 @@
+////////////////////////////////////////////////////////////////////
+// START BPEL4WS Process: ORCHESTRATOR
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// BPEL Process Information
+//
+// Added Partner : orchestratorpartnerlink,INTF:ORCHESTRATORPARTNERLINKTYPE
+// Added Partner : extrenalwspartnerlink,INTF:EXTENALWSPARTNERLINKTYPE
+// ORCHESTRATOR has 1 partner(s) linkss.
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// BPEL Process Translation
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// START: General Process Condition Variables
+////////////////////////////////////////////////////////////////////
+range ORCHESTRATOR_IntRange = 0..1
+ORCHESTRATOR_variable(A=0) = ORCHESTRATOR_variable[A],
+ORCHESTRATOR_variable[i:ORCHESTRATOR_IntRange] = ( write[j:ORCHESTRATOR_IntRange]->ORCHESTRATOR_variable[j] | read[i]->ORCHESTRATOR_variable[i]),
+ORCHESTRATOR_variable['null] = ( write[j:ORCHESTRATOR_IntRange]->ORCHESTRATOR_variable[j] | read['null]->ORCHESTRATOR_variable['null]).
+set ORCHESTRATOR_BoolRange = {false, true}
+ENUM_ORCHESTRATOR_variable(A='null) = ORCHESTRATOR_variable[A],
+ORCHESTRATOR_variable[i:ORCHESTRATOR_BoolRange] = ( write[j:ORCHESTRATOR_BoolRange]->ORCHESTRATOR_variable[j] | read[i]->ORCHESTRATOR_variable[i]),
+ORCHESTRATOR_variable['null] = ( write[j:ORCHESTRATOR_BoolRange]->ORCHESTRATOR_variable[j] | read['null]->ORCHESTRATOR_variable['null]).
+////////////////////////////////////////////////////////////////////
+// END: Variables
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// START: sequence - SEQUENCE1
+////////////////////////////////////////////////////////////////////
+ORCHESTRATOR_RECIVEACTION11 = (orchestrator_orchestratorpartnerlink_receive_action1 -> END).
+ORCHESTRATOR_REPLYACTION11 = (orchestrator_orchestratorpartnerlink_reply_action1 -> END).
+ORCHESTRATOR_RECEIVEACTION21 = (orchestrator_orchestratorpartnerlink_receive_action2 -> END).
+ORCHESTRATOR_REPLYATION21 = (orchestrator_orchestratorpartnerlink_reply_action2 -> END).
+ORCHESTRATOR_SEQUENCE1 = ORCHESTRATOR_RECIVEACTION11 ; ORCHESTRATOR_REPLYACTION11 ; ORCHESTRATOR_RECEIVEACTION21 ; ORCHESTRATOR_REPLYATION21; END.
+////////////////////////////////////////////////////////////////////
+// END: sequence - ORCHESTRATOR_SEQUENCE1
+////////////////////////////////////////////////////////////////////
+set ORCHESTRATOR_ACTIONSET = {orchestrator_orchestratorpartnerlink_receive_action1,orchestrator_orchestratorpartnerlink_reply_action1,orchestrator_orchestratorpartnerlink_receive_action2,orchestrator_orchestratorpartnerlink_reply_action2}
+||ORCHESTRATOR_Instance = (ORCHESTRATOR_SEQUENCE1).
+||ORCHESTRATOR_BPELModel = (ORCHESTRATOR_SEQUENCE1).
+// /////////////////////////////////////////////////////////////////
+// END BPEL4WS Process: ORCHESTRATOR
+// /////////////////////////////////////////////////////////////////

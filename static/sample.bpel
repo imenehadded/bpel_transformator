@@ -1,0 +1,53 @@
+
+<process name="Orchestrator"
+    targetNamespace="http://www.jboss.org/bpel/examples" 
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:tns="http://www.jboss.org/bpel/examples"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
+    xmlns:intf="http://orchestrator.org/"  
+    xmlns:ws0="http://ws.external.org/">
+ 
+    <import namespace="http://orchestrator.org/" location="orchestrator.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" />
+	<import namespace="http://ws.external.org/"  location="external_ws.wsdl"  importType="http://schemas.xmlsoap.org/wsdl/" /> 
+	
+   <partnerLinks>
+      <partnerLink name="OrchestratorPartnerLink"  partnerLinkType="intf:OrchestratorPartnerLinkType"      myRole="me" />
+ 	  <partnerLink name="extrenaLWsPartnerLink"    partnerLinkType="intf:ExtenalWsPartnerLinkType"         myRole="externalws" />	
+    </partnerLinks>
+    
+   <variables>
+        <variable name="service1Variable" messageType="intf:Service1Message"/>
+        <variable name="service2Variable" messageType="intf:Service2Message"/>
+        
+        
+        
+    </variables>
+    
+    <correlationSets>
+        <correlationSet name="session" properties="intf:sessionid"></correlationSet>
+    </correlationSets> 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+    <sequence>
+       
+        <receive name="ReciveAction1" partnerLink="OrchestratorPartnerLink" portType="intf:OrchestratorPortType" operation="action1" variable="service1Variable" createInstance="yes">
+            <correlations>
+                <correlation set="session" initiate="yes"></correlation>
+            </correlations>
+        </receive>
+            
+         <reply name="ReplyAction1" partnerLink="OrchestratorPartnerLink" portType="intf:OrchestratorPortType" operation="action1" variable="service1Variable">
+             <correlations><correlation set="session" initiate="no"></correlation>
+         
+             </correlations>
+         </reply>
+ 
+        <receive name="ReceiveAction2" partnerLink="OrchestratorPartnerLink" operation="action2" portType="intf:OrchestratorPortType" variable="service2Variable">
+            <correlations>
+                <correlation set="session" initiate="no"></correlation>
+            </correlations>
+        </receive>
+        <reply name="ReplyAtion2" partnerLink="OrchestratorPartnerLink" operation="action2" portType="intf:OrchestratorPortType" variable="service2Variable"></reply>
+    </sequence>
+   
+ </process>

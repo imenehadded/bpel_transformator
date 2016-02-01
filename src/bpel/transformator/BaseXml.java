@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -22,76 +23,64 @@ import org.xml.sax.SAXException;
 abstract class BaseXml {
 
 	abstract public void dumps(String output_file);
-	
-	
-	protected Document loads(String source){
-		
-		try {
-			DocumentBuilder xmlBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document xmlDocument = xmlBuilder.parse(new File(source));
-			return xmlDocument;
-			
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
- 
+
+	protected Document loads(String source) throws ParserConfigurationException, SAXException, IOException {
+
+		DocumentBuilder xmlBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document xmlDocument = xmlBuilder.parse(new File(source));
+		return xmlDocument;
+
 	}
-	
-	public String get_xmlns(Document document,String namespace_url) {
-		 
+
+	public String get_xmlns(Document document, String namespace_url) {
+
 		Node node = document.getFirstChild();
- 
-  		NamedNodeMap attributes  = node.getAttributes();
-  		
-  		for (int i= 0;i<attributes.getLength();i++) {
-  			Node iNode = attributes.item(i);
-  			
-  			if(iNode.getNodeValue().equals(namespace_url)){
-  				String node_name =iNode.getNodeName();
-  				if(node_name.startsWith("xmlns:")){
- 
-  					String ns_name= node_name.substring(node_name.indexOf(":")+1);
-  					
-  					return ns_name.equals("") ? ns_name : ns_name+":";
-  				}
-  			}
+
+		NamedNodeMap attributes = node.getAttributes();
+
+		for (int i = 0; i < attributes.getLength(); i++) {
+			Node iNode = attributes.item(i);
+
+			if (iNode.getNodeValue().equals(namespace_url)) {
+				String node_name = iNode.getNodeName();
+				if (node_name.startsWith("xmlns:")) {
+
+					String ns_name = node_name.substring(node_name.indexOf(":") + 1);
+
+					return ns_name.equals("") ? ns_name : ns_name + ":";
+				}
+			}
 		}
-  		
-  		return "";
+
+		return "";
 	}
-	
+
 	protected void dumps(Document document, String output_file) {
-		
+
 		// write the content into xml file
-		System.out.println("Start writing content in xml file "+output_file);
+		System.out.println("Start writing content in xml file " + output_file);
 
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer;
-		
+
 		try {
-			
+
 			transformer = transformerFactory.newTransformer();
 
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
 			DOMSource source = new DOMSource(document);
-			
+
 			File xmloutput = new File(output_file);
-			
-			if(!xmloutput.exists())
+
+			if (!xmloutput.exists())
 				xmloutput.createNewFile();
 
 			StreamResult result = new StreamResult(xmloutput);
 
 			transformer.transform(source, result);
-			
+
 		} catch (TransformerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,20 +90,20 @@ abstract class BaseXml {
 		}
 
 	}
-	
+
 	public void setAttributeNode(Node node, String key, String value) {
-		 
-		NamedNodeMap attributes  = node.getAttributes();
+
+		NamedNodeMap attributes = node.getAttributes();
 		Node attribute = attributes.getNamedItem(key);
-		if(attribute == null){
+		if (attribute == null) {
 
 			Attr operationAttr = node.getOwnerDocument().createAttribute(key);
 			operationAttr.setValue(value);
-			
+
 			Element node_element = (Element) node;
 			node_element.setAttributeNode(operationAttr);
-			
+
 		}
-		
+
 	}
 }

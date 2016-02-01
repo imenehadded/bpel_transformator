@@ -1,12 +1,16 @@
 package bpel.transformator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class MonitorWsdlManager extends BaseXml {
 
@@ -18,8 +22,9 @@ public class MonitorWsdlManager extends BaseXml {
 	public static String MONITOR_WSDL_PREFIX = "monitns";
 	public static String MONITOR_REQUEST_VARAIBLE_NAME = "monitorServiceRequest";
 	public static String MONITOR_RESPONSE_VARAIBLE_NAME = "monitorServiceResponse";
+	public static String MONITOR_LATEST_EXPRESSION = "monitorLatestExpression";
 
-	protected MonitorWsdlManager(String source) {
+	protected MonitorWsdlManager(String source) throws ParserConfigurationException, SAXException, IOException {
 
 		this.xmlDocument = this.loads(source);
 
@@ -181,7 +186,7 @@ public class MonitorWsdlManager extends BaseXml {
 
 	}
 
-	public String get_opation_name() {
+	public String get_operation_name() {
 		Node operation = this.get_operation_node();
 		String monitor_opertation_name = operation.getAttributes().getNamedItem("name").getNodeValue();
 		System.out.println("MONITOR OPERATION PORTAL-TYPE NAME : " + monitor_opertation_name);
@@ -201,11 +206,23 @@ public class MonitorWsdlManager extends BaseXml {
 
 	public String get_service_name() {
 
-		NodeList nodeList = this.xmlDocument.getElementsByTagName(this.tag("portType"));
+		NodeList nodeList = this.xmlDocument.getElementsByTagName(this.tag("service"));
 
 		String service_name = nodeList.item(0).getAttributes().getNamedItem("name").getNodeValue();
 
 		return service_name;
+
+	}
+
+	public String get_binding_name() {
+
+		Element service = (Element) this.xmlDocument.getElementsByTagName(this.tag("service")).item(0);
+
+		Node portNode = service.getElementsByTagName(this.tag("port")).item(0);
+
+		String port_name = portNode.getAttributes().getNamedItem("name").getNodeValue();
+
+		return port_name;
 
 	}
 }

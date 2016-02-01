@@ -1,0 +1,5 @@
+des(0,4,5)
+(0,orchestrator_orchestratorpartnerlink_receive_action1,1)
+(1,orchestrator_orchestratorpartnerlink_reply_action1,2)
+(2,orchestrator_orchestratorpartnerlink_receive_action2,3)
+(3,orchestrator_orchestratorpartnerlink_reply_action2,4)
