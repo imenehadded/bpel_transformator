@@ -161,20 +161,14 @@ public class AutManager {
 		String process_name = bpelManger.get_process_name();
 
 		for (Edge edge : allEdges) {
-			System.out.println(">>>> " + edge.getLabel());
-
+ 
 			String[] split = this.splitLable(edge.getLabel(), process_name);
 
 			String bpel_action_name = bpelManger.get_action_name(split[2], split[1], split[3]);
 
-			if (bpel_action_name == null) {
-				System.err
-						.println(split[0] + "," + split[1] + "," + split[2] + "," + split[3] + "," + bpel_action_name);
+			if (bpel_action_name == null)  
 				continue;
-			}
-
-			System.out.println(split[0] + "," + split[1] + "," + split[2] + "," + split[3] + "," + bpel_action_name);
-
+	 
 			edge.setBpel_process_name(split[0]);
 			edge.setBpel_partnerLink(split[1]);
 			edge.setBpel_action(split[2]);

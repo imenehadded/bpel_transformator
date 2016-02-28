@@ -13,8 +13,9 @@ public class Action {
 	public Action() {
 	}
 
-	public Action(Node node) {
-		this.action = node.getNodeName();
+	public Action(Node node,String prefix) {
+		 
+		this.action = node.getNodeName().replace(prefix, "");
 
 		NamedNodeMap attributes = node.getAttributes();
 		Node partnerLinkAttr = attributes.getNamedItem("partnerLink");

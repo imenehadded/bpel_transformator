@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -187,23 +189,6 @@ public class BpelManager extends BaseXml {
 		return false;
 	}
 
-	/*
-	 * private Node getActionNodeByName(String operation,String action) {
-	 * 
-	 * NodeList list =
-	 * this.xmlDocument.getElementsByTagName(this.tag("invoke"));
-	 * System.out.println(list.getLength() + " INVOKE FOUND"); for (int i = 0; i
-	 * < list.getLength(); i++) { Node node = list.item(i); NamedNodeMap
-	 * attributes = node.getAttributes(); String attrName =
-	 * attributes.getNamedItem("name").getNodeValue(); if
-	 * (attrName.equals(action)) { System.out.println("NODE FOUND " + attrName);
-	 * return node; } }
-	 * 
-	 * return null;
-	 * 
-	 * }
-	 */
-
 	public void setMonitorService(MonitorWsdlManager monitorManager, String action, String partnerlink,
 			String operation, int index) {
 
@@ -227,16 +212,13 @@ public class BpelManager extends BaseXml {
 		String exitConditionName = "condition_" + action + "_" + index;
 		Node exitcondtionNode = this.getExitCondition(exitConditionName);
 
-		// Insert before
 		Node parentNode = actionNode.getParentNode();
 
 		if (action.equals("invoke") || action.equals("reply")) {
-
-			System.out.println(" INSERT BEFORE ********** ");
-
+			// Insert before
 			parentNode.insertBefore(exitcondtionNode, actionNode);
 
-		} else if (action.equals("receive")) {
+		} else if (action.equals("receive") || action.equals("onMessage")) {
 			// Insert after
 			parentNode.insertBefore(exitcondtionNode, actionNode.getNextSibling());
 		}
@@ -494,20 +476,22 @@ public class BpelManager extends BaseXml {
 
 		Node firstNode = this.xmlDocument.getFirstChild();
 
-		return this.get_actions(firstNode.getChildNodes());
+		return this.getActions(firstNode.getChildNodes());
 	}
 
-	private List<Action> get_actions(NodeList nodeList) {
+	private List<Action> getActions(NodeList nodeList) {
 
 		List<Action> list_action = new ArrayList<Action>();
 
+		String prefix = this.get_xmlns(this.xmlDocument, "http://docs.oasis-open.org/wsbpel/2.0/process/executable");
+
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
-			List<Action> child_list = this.get_actions(node.getChildNodes());
+			List<Action> child_list = this.getActions(node.getChildNodes());
 			list_action.addAll(child_list);
 
 			if (this.is_action(node) == true) {
-				list_action.add(new Action(node));
+				list_action.add(new Action(node, prefix));
 			}
 		}
 
@@ -515,24 +499,23 @@ public class BpelManager extends BaseXml {
 	}
 
 	private boolean is_action(Node node) {
+
 		String name = node.getNodeName();
-		
+
 		NamedNodeMap attributes = node.getAttributes();
-		if(attributes == null)
+		if (attributes == null)
 			return false;
-		
+
 		Node partnerLinkAttr = attributes.getNamedItem("partnerLink");
-		
-		if(partnerLinkAttr == null)
+
+		if (partnerLinkAttr == null)
 			return false;
-		
-		
+
 		String partnerLink = partnerLinkAttr.getNodeValue();
-		
-		if(partnerLink.equals(MonitorWsdlManager.MONITOR_PARTNERLINK_NAME))
+
+		if (partnerLink.equals(MonitorWsdlManager.MONITOR_PARTNERLINK_NAME))
 			return false;
- 
-		
+
 		if (name.equals(this.tag("invoke")) || name.equals(this.tag("receive")) || name.equals(this.tag("onMessage")))
 			return true;
 
@@ -540,8 +523,52 @@ public class BpelManager extends BaseXml {
 	}
 
 	public void remove_monitor() {
-		// TODO
-	}
-
  
+		Node node = this.xmlDocument.getFirstChild();
+		this.remove_monitor(node);
+		
+	}
+	
+	private void remove_monitor(Node node) {
+		
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			this.remove_monitor(child);
+		}
+
+		if(this.is_relevent_montior(node)==true){
+			
+			node.getParentNode().removeChild(node);
+		}
+  
+	}
+	
+	private boolean is_relevent_montior(Node node) {
+
+		String[] relevent_re = { "assignMonitorInputTo\\w+_\\w+", "invokeMonitor_\\w+_\\w+",
+				"assignMonitorOutputTo\\w+_\\w+", "condition_\\w+_\\w+" };
+		
+		NamedNodeMap attributes = node.getAttributes();
+		if (attributes == null)
+			return false;
+		
+		Node name = attributes.getNamedItem("name");
+
+		if (name == null)
+			return false;
+		
+		for( String action_pattern : relevent_re){
+			 
+			Pattern pattern = Pattern.compile(action_pattern);
+			Matcher matcher = pattern.matcher(name.getNodeValue());
+			boolean is_matched = matcher.matches();
+			if(is_matched==true){
+				System.out.println(">>>>>>>>>>>>>>>> "+name.getNodeValue());
+				return true;
+			}
+		}
+ 
+		return false;
+	}
 }

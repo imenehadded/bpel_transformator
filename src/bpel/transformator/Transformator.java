@@ -13,11 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
- 
-import bpel.transformator.aldebarane.AutManager;
-import bpel.transformator.aldebarane.Edge;
-import bpel.transformatorldebarane.lts.Bpel2Lts;
-import bpel.transformatorldebarane.lts.Lts2Aut;
+  
 
 public class Transformator {
 
@@ -136,9 +132,12 @@ public class Transformator {
 			throws TransformerException, ParserConfigurationException, SAXException, IOException {
 
 		BpelManager bpelManager = new BpelManager(this.bpel_file);
+		
+		bpelManager.remove_monitor();
+		
 		MonitorWsdlManager monitorManager = new MonitorWsdlManager(monitor_wsdl_file);
 
-		File bpel_file_obj = new File(this.bpel_file);
+/*		File bpel_file_obj = new File(this.bpel_file);
 
 	    String lts_output_file = new File(this.bpel_project_path, bpel_file_obj.getName() + ".lts").toString();
 		String aut_output_file = new File(this.bpel_project_path, bpel_file_obj.getName() + ".aut").toString();
@@ -153,7 +152,7 @@ public class Transformator {
 
 		List<Edge> criticalEdges = aut.getCriticalEdges();
 
-		aut.loadBpelLables(bpelManager, criticalEdges);
+		aut.loadBpelLables(bpelManager, criticalEdges);*/
 		 
 		/*
 		int i = 0;
@@ -185,6 +184,13 @@ public class Transformator {
 
 		bpelManager.dumps(this.bpel_file);
 
+	}
+
+	public void removeMonitor() throws ParserConfigurationException, SAXException, IOException {
+		BpelManager bpelManager = new BpelManager(this.bpel_file);
+		bpelManager.remove_monitor();
+		
+		bpelManager.dumps(this.bpel_file);
 	}
 
 }
