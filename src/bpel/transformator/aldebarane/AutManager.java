@@ -1,4 +1,4 @@
-package bpel.aldebarane;
+package bpel.transformator.aldebarane;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -15,7 +15,6 @@ import bpel.transformator.BpelManager;
 
 public class AutManager {
 
-	
 	private List<String> aut_content = new ArrayList<String>();
 
 	private String org_expression = null;
@@ -25,7 +24,7 @@ public class AutManager {
 	public AutManager(String aut_location_file, String expression) throws IOException {
 
 		this.org_expression = expression;
- 
+
 		FileInputStream ins = new FileInputStream(aut_location_file);
 
 		InputStreamReader r = new InputStreamReader(ins, "UTF-8");
@@ -36,7 +35,7 @@ public class AutManager {
 			aut_content.add(line);
 		}
 		br.close();
- 
+
 	}
 
 	private List<Edge> getEdges() {
@@ -67,7 +66,7 @@ public class AutManager {
 		List<Edge> successors = this.getSuccessors(s);
 
 		for (Edge edge : successors) {
-			
+
 			String action = edge.getBpel_action_name();
 
 			String d_expression = derivative(expression, action);
@@ -157,31 +156,32 @@ public class AutManager {
 		return split;
 	}
 
-	public void loadBpelLables(BpelManager bpelManger,List<Edge> allEdges) {
+	public void loadBpelLables(BpelManager bpelManger, List<Edge> allEdges) {
 		System.out.println("################# IN LOAD BPEL LABLES ##############");
 		String process_name = bpelManger.get_process_name();
 
 		for (Edge edge : allEdges) {
-			System.out.println(">>>> "+edge.getLabel());
-			
+			System.out.println(">>>> " + edge.getLabel());
+
 			String[] split = this.splitLable(edge.getLabel(), process_name);
-			
+
 			String bpel_action_name = bpelManger.get_action_name(split[2], split[1], split[3]);
-			
-			if(bpel_action_name==null){
-				System.err.println(split[0]+","+split[1]+","+split[2]+","+split[3]+","+bpel_action_name);
+
+			if (bpel_action_name == null) {
+				System.err
+						.println(split[0] + "," + split[1] + "," + split[2] + "," + split[3] + "," + bpel_action_name);
 				continue;
 			}
-				
-			System.out.println(split[0]+","+split[1]+","+split[2]+","+split[3]+","+bpel_action_name);
-			
+
+			System.out.println(split[0] + "," + split[1] + "," + split[2] + "," + split[3] + "," + bpel_action_name);
+
 			edge.setBpel_process_name(split[0]);
 			edge.setBpel_partnerLink(split[1]);
 			edge.setBpel_action(split[2]);
-			edge.setBpel_operation(split[3]); 
+			edge.setBpel_operation(split[3]);
 
 			edge.setBpel_action_name(bpel_action_name);
- 
+
 		}
 	}
 }

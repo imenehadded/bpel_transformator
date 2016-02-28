@@ -1,4 +1,4 @@
-package bpel.aldebarane.lts;
+package bpel.transformatorldebarane.lts;
 
 import java.io.File;
 import java.io.IOException;

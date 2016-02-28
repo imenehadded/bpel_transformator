@@ -2,6 +2,8 @@ package bpel.transformator;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -224,25 +226,27 @@ public class BpelManager extends BaseXml {
 
 		String exitConditionName = "condition_" + action + "_" + index;
 		Node exitcondtionNode = this.getExitCondition(exitConditionName);
-		
-		// Insert before 
+
+		// Insert before
 		Node parentNode = actionNode.getParentNode();
-		
-		if(action.equals("invoke") || action.equals("reply")){
- 
+
+		if (action.equals("invoke") || action.equals("reply")) {
+
+			System.out.println(" INSERT BEFORE ********** ");
+
 			parentNode.insertBefore(exitcondtionNode, actionNode);
- 
-		}else if(action.equals("receive")){
-			//Insert after
+
+		} else if (action.equals("receive")) {
+			// Insert after
 			parentNode.insertBefore(exitcondtionNode, actionNode.getNextSibling());
-		}	 
-		
+		}
+
 		parentNode.insertBefore(assignMonitorOutputNode, exitcondtionNode);
 
 		parentNode.insertBefore(invokeMonitorNode, assignMonitorOutputNode);
 
 		parentNode.insertBefore(assignMonitorInputNode, invokeMonitorNode);
- 	
+
 	}
 
 	private Node getAssignMonitorOutput(String assignName) {
@@ -434,7 +438,7 @@ public class BpelManager extends BaseXml {
 
 			if (value.toLowerCase().equals(operation.toLowerCase()) == false)
 				continue;
-
+			System.out.println("IN ALL ACTIONS LOOP OPERATION NAME  : " + value);
 			return node;
 		}
 
@@ -485,4 +489,59 @@ public class BpelManager extends BaseXml {
 		}
 
 	}
+
+	protected List<Action> getActions() {
+
+		Node firstNode = this.xmlDocument.getFirstChild();
+
+		return this.get_actions(firstNode.getChildNodes());
+	}
+
+	private List<Action> get_actions(NodeList nodeList) {
+
+		List<Action> list_action = new ArrayList<Action>();
+
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
+			List<Action> child_list = this.get_actions(node.getChildNodes());
+			list_action.addAll(child_list);
+
+			if (this.is_action(node) == true) {
+				list_action.add(new Action(node));
+			}
+		}
+
+		return list_action;
+	}
+
+	private boolean is_action(Node node) {
+		String name = node.getNodeName();
+		
+		NamedNodeMap attributes = node.getAttributes();
+		if(attributes == null)
+			return false;
+		
+		Node partnerLinkAttr = attributes.getNamedItem("partnerLink");
+		
+		if(partnerLinkAttr == null)
+			return false;
+		
+		
+		String partnerLink = partnerLinkAttr.getNodeValue();
+		
+		if(partnerLink.equals(MonitorWsdlManager.MONITOR_PARTNERLINK_NAME))
+			return false;
+ 
+		
+		if (name.equals(this.tag("invoke")) || name.equals(this.tag("receive")) || name.equals(this.tag("onMessage")))
+			return true;
+
+		return false;
+	}
+
+	public void remove_monitor() {
+		// TODO
+	}
+
+ 
 }

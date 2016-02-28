@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="lib/uk.ic.doc.ltsa.eclipse.bpel_2.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/uk.ic.doc.ltsa.ws.core_2.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/tn.regex.derivator.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

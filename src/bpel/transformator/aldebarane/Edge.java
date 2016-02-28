@@ -1,4 +1,4 @@
-package bpel.aldebarane;
+package bpel.transformator.aldebarane;
 
 public class Edge {
 

@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class DeployXmlManager extends BaseXml {
+class DeployXmlManager extends BaseXml {
 
 	private Document xmlDocument;
 	private MonitorWsdlManager monitorManager;

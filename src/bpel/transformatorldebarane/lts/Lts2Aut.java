@@ -1,4 +1,4 @@
-package bpel.aldebarane.lts;
+package bpel.transformatorldebarane.lts;
 
 import java.io.DataInputStream;
 import java.io.File;

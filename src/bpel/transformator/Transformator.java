@@ -13,25 +13,24 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
+ 
+import bpel.transformator.aldebarane.AutManager;
+import bpel.transformator.aldebarane.Edge;
+import bpel.transformatorldebarane.lts.Bpel2Lts;
+import bpel.transformatorldebarane.lts.Lts2Aut;
 
-import bpel.aldebarane.AutManager;
-import bpel.aldebarane.Edge;
-import bpel.aldebarane.lts.Bpel2Lts;
-import bpel.aldebarane.lts.Lts2Aut;
-
-public class MainTransformator {
+public class Transformator {
 
 	private String bpel_project_path = null;
 
 	private String bpel_file = null;
 	private String bpel_deploy_file = null;
-
-	public MainTransformator(String project_path) {
-
-		System.out.println(project_path);
-
+	
+	
+	public Transformator(String project_path) {
+ 
 		this.bpel_project_path = new File(project_path, "bpelContent").getPath();
-
+		
 		File folder = new File(this.bpel_project_path);
 		File[] listOfFiles = folder.listFiles();
 
@@ -49,7 +48,6 @@ public class MainTransformator {
 
 		System.out.println(this.bpel_file);
 		System.out.println(this.bpel_deploy_file);
-
 	}
 
 	private String download_wsdl_file(String wsdl_url) throws IOException {
@@ -126,7 +124,14 @@ public class MainTransformator {
 		
 
 	}
-
+	
+	public List<Action> getActions() throws ParserConfigurationException, SAXException, IOException{
+		
+		BpelManager bpelManager = new BpelManager(this.bpel_file);
+		return bpelManager.getActions();
+		
+	}
+	
 	public void add_monitor_service(String monitor_wsdl_file, String expression)
 			throws TransformerException, ParserConfigurationException, SAXException, IOException {
 
@@ -135,7 +140,7 @@ public class MainTransformator {
 
 		File bpel_file_obj = new File(this.bpel_file);
 
-		String lts_output_file = new File(this.bpel_project_path, bpel_file_obj.getName() + ".lts").toString();
+	    String lts_output_file = new File(this.bpel_project_path, bpel_file_obj.getName() + ".lts").toString();
 		String aut_output_file = new File(this.bpel_project_path, bpel_file_obj.getName() + ".aut").toString();
 
 		Bpel2Lts bpel2lts = new Bpel2Lts(this.bpel_file);
@@ -149,7 +154,8 @@ public class MainTransformator {
 		List<Edge> criticalEdges = aut.getCriticalEdges();
 
 		aut.loadBpelLables(bpelManager, criticalEdges);
-
+		 
+		/*
 		int i = 0;
 		for (Edge edge : criticalEdges) {
 
@@ -169,14 +175,15 @@ public class MainTransformator {
 			bpelManager.setMonitorService(monitorManager, action, partnerlink, operation, i);
 
 			i++;
-		}
-
+		}*/
+		
+ 
+		bpelManager.setMonitorService(monitorManager, "invoke", "ExternalWs", "expF", 0);
+		bpelManager.setMonitorService(monitorManager, "invoke", "ExternalWs", "bl", 1);
+		
 		// bpelManager.setMonitorService("InvokeServiceA",0 );
 
-		// String test = "C:\\Users\\Imene\\Desktop\\bpel_test\\test_5.bpel";
-
 		bpelManager.dumps(this.bpel_file);
-		// bpelManager.dumps(test);
 
 	}
 
