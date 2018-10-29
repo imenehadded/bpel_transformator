@@ -57,13 +57,13 @@ public class UnitTest {
 
 	}
 	
-	private boolean relevent_to_monitor(String name){
+	private boolean relevant_to_monitor(String name){
 		
-		String[] relevent_re = { "assignMonitorInputTo\\w+_\\w+", "invokeMonitor_\\w+_\\w+",
+		String[] relevant_re = { "assignMonitorInputTo\\w+_\\w+", "invokeMonitor_\\w+_\\w+",
 				"assignMonitorOutputTo\\w+_\\w+", "condition_\\w+_\\w+" };
  
 		
-		for( String action_pattern : relevent_re){
+		for( String action_pattern : relevant_re){
 			Pattern pattern = Pattern.compile(action_pattern);
 			Matcher matcher = pattern.matcher((CharSequence) name);
 			boolean is_matched = matcher.matches();
@@ -76,11 +76,11 @@ public class UnitTest {
 	}
 	
 	// @Test
-	public void relevent(){
+	public void relevant(){
 		
-		System.out.println("abc , " +relevent_to_monitor("abc"));
-		System.out.println("assignMonitorInputTomohame_moha , " +relevent_to_monitor("assignMonitorInputTomohame_moha"));
-		System.out.println("invokeMonitor_allo_allo , " +relevent_to_monitor("invokeMonitor_al_lo_allo"));
+		System.out.println("abc , " +relevant_to_monitor("abc"));
+		System.out.println("assignMonitorInputTomohame_moha , " +relevant_to_monitor("assignMonitorInputTomohame_moha"));
+		System.out.println("invokeMonitor_allo_allo , " +relevant_to_monitor("invokeMonitor_al_lo_allo"));
 	}
 	
 	// @Test
